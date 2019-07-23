@@ -1,0 +1,79 @@
+<nav class="navbar navbar-expand py-0">
+    <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+            <a class="nav-link" routerLink="/listar">Listar</a>
+        </li>
+    </ul>
+</nav>
+<h3>Cadastrar Herói</h3>
+<div class="form-row mb-4 justify-content-center">
+    <div class="col-xs-12 col-sm-11 col-md-4 col-lg-4 input-wrap">
+        <input type="text" class="form-control" [(ngModel)]="nome" required/>
+        <span class="floating-label">Nome</span>
+    </div>
+</div>
+<div class="form-row mb-4 justify-content-center">
+    <div class="col-xs-12 col-sm-11 col-md-4 col-lg-4 select-wrap">
+        <select class="form-control" [(ngModel)]="universo" required>
+            <option value="" disabled selected></option>
+            <option *ngFor="let u of universos" value="{{u.id}}">{{u.nome}}</option>
+        </select>
+        <span class="floating-label">Universo</span>
+    </div>
+</div>
+<div *ngIf="universosErro && !buscandoUniversos">
+    <div class="d-inline-flex p-2 justify-content-center">
+        <span class="alert alert-danger" role="alert">
+            {{universosErro}}
+        </span>
+    </div>
+    <div class="form-row mb-4 justify-content-center">
+        <button class="btn btn-secondary btn-sm" (click)="buscarUniversos()" [disabled]="buscandoUniversos">Buscar Universos</button>
+    </div>
+</div>
+<div class="form-row mb-4 justify-content-center">
+    <div class="col-xs-12 col-sm-11 col-md-4 col-lg-4 input-group">
+        <input type="text" class="form-control" [(ngModel)]="poder" placeholder="Poder"/>
+        <span class="input-group-btn">
+            <button class="btn btn-primary" (click)="adicionarPoder()">Adicionar</button>
+        </span>
+    </div>
+</div>
+<div class="form-row mb-4 justify-content-center">
+    <div class="table-responsive col-xs-12 col-sm-11 col-md-4 col-lg-4" *ngIf="poderes.length > 0">
+        <table id="tabelaPoderes" class="table table-bordered table-sm mx-auto w-auto">
+            <thead>
+                <tr>
+                    <th>Poder</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let p of poderes">
+                    <td width="90%">{{p.descricao}}</td>
+                    <td width="10%">
+                        <button class="btn btn-danger" style="height: 1.5em;" (click)="removerPoder(p)">
+                            <span style="position: relative; bottom: 8px;">Remover</span>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div *ngIf="cadastrarErro">
+    <div class="d-inline-flex p-2 justify-content-center">
+        <span class="alert alert-danger" role="alert">
+            {{cadastrarErro}}
+        </span>
+    </div>
+</div>
+<div *ngIf="cadastrarSucesso">
+    <div class="d-inline-flex p-2 justify-content-center">
+        <span class="alert alert-success" role="alert">
+            {{cadastrarSucesso}}
+        </span>
+    </div>
+</div>
+<div class="form-row mb-4 justify-content-center">
+    <button class="btn btn-success" (click)="adicionarHeroi()" [disabled]="!nome || !universo || poderes.length == 0 || adicionandoHeroi">Cadastrar</button>
+</div>

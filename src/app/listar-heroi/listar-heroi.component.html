@@ -1,0 +1,59 @@
+
+<nav class="navbar navbar-expand py-0">
+    <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+            <a class="nav-link" routerLink="/cadastrar">Cadastrar</a>
+        </li>
+    </ul>
+</nav>
+<h3>Heróis</h3>
+<div *ngIf="herois.length > 0" class="table-responsive">
+    <table id="tabelaHeroi" class="table table-bordered table-sm mx-auto w-auto">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Universo</th>
+                <th>Cadastrado</th>
+                <th>Poder(es)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let h of herois">
+                <td>{{h.nome}}</td>
+                <td>{{h.universo.nome}}</td>
+                <td>{{h.dataCadastro | date: 'dd/MM/yyyy HH:mm:ss'}}</td>
+                <td>
+                    <span *ngFor="let p of h.poderes">{{p.descricao}}; </span>
+                </td>
+                <td>
+                    <button class="btn btn-danger" style="height: 1.5em;" (click)="excluirHeroi(h)">
+                        <span style="position: relative; bottom: 8px;">Excluir</span>
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div *ngIf="!herois && !heroisErro && !carregandoHerois" class="d-inline-flex p-2 justify-content-center">
+    <span class="alert alert-danger" role="alert">
+        Não há heróis cadastrados.
+    </span>
+</div>
+<div *ngIf="heroisErro && !carregandoHerois" class="d-inline-flex p-2 justify-content-center">
+    <span class="alert alert-danger" role="alert">
+        {{heroisErro}}
+    </span>
+</div>
+<div *ngIf="heroiExcluirSucesso" class="d-inline-flex p-2 justify-content-center">
+    <span class="alert alert-success" role="alert">
+        {{heroiExcluirSucesso}}
+    </span>
+</div>
+<div *ngIf="heroiExcluirErro" class="d-inline-flex p-2 justify-content-center">
+    <span class="alert alert-danger" role="alert">
+        {{heroiExcluirErro}}
+    </span>
+</div>
+<div class="form-row mb-4 justify-content-center">
+    <button class="btn btn-primary" (click)="carregarHerois()" [disabled]="carregandoHerois">Atualizar</button>
+</div>
