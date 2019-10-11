@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Universo } from '../model/universo';
 import { Poder } from '../model/poder';
-import { UniversoService } from '../universo.service';
-import { HeroiService } from '../heroi.service';
+import { UniversoService } from '../service/universo.service';
+import { HeroiService } from '../service/heroi.service';
 import { Heroi } from '../model/heroi';
 
 @Component({

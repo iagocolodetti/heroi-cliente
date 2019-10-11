@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Heroi } from '../model/heroi';
-import { HeroiService } from '../heroi.service';
+import { HeroiService } from '../service/heroi.service';
 
 @Component({
   selector: 'app-listar-heroi',
@@ -48,8 +48,9 @@ export class ListarHeroiComponent implements OnInit {
             this.herois.splice(this.herois.indexOf(heroi), 1);
             this.heroiExcluirSucesso = `Herói '${heroi.nome}' excluído com sucesso.`;
           })
-          .catch(() => {
+          .catch((erro) => {
             this.heroiExcluirErro = `Erro: Não foi possível excluir o herói '${heroi.nome}'.`;
+            console.error(erro);
           });
     }
   }

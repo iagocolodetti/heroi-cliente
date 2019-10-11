@@ -6,8 +6,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ListarHeroiComponent } from './listar-heroi/listar-heroi.component';
 import { CadastrarHeroiComponent } from './cadastrar-heroi/cadastrar-heroi.component';
-import { HeroiService } from './heroi.service';
-import { UniversoService } from './universo.service';
+import { HeroiService } from './service/heroi.service';
+import { UniversoService } from './service/universo.service';
 
 @NgModule({
   declarations: [
