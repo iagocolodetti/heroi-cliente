@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Universo } from '../model/universo';
 import { Poder } from '../model/poder';
 import { UniversoService } from '../service/universo.service';
@@ -11,6 +12,8 @@ import { Heroi } from '../model/heroi';
   styleUrls: ['./cadastrar-heroi.component.css']
 })
 export class CadastrarHeroiComponent implements OnInit {
+
+  token = null;
 
   nome = null;
   universo = null;
@@ -25,15 +28,19 @@ export class CadastrarHeroiComponent implements OnInit {
   cadastrarSucesso = null;
   adicionandoHeroi = false;
 
-  constructor(private universoService: UniversoService, private heroiService: HeroiService) { }
+  constructor(private universoService: UniversoService, private heroiService: HeroiService, private router: Router) { }
 
   ngOnInit() {
+    this.token = localStorage.getItem('heroisApiToken');
+    if (!this.token) {
+      this.router.navigateByUrl('/login');
+    }
     this.buscarUniversos();
   }
 
   buscarUniversos() {
     this.buscandoUniversos = true;
-    this.universoService.buscarUniversos()
+    this.universoService.buscar()
         .then((universos: Array<Universo>) => {
           this.universos = universos;
           this.universosErro = null;
@@ -66,15 +73,15 @@ export class CadastrarHeroiComponent implements OnInit {
       this.cadastrarErro = 'Erro: Adicione ao menos um poder.';
     } else {
       this.adicionandoHeroi = true;
-      let heroi = new Heroi(null, this.nome, new Date(), new Universo(this.universo, null), this.poderes);
-      this.heroiService.adicionarHeroi(heroi)
+      let heroi = new Heroi(null, this.nome, null, new Universo(this.universo, null), this.poderes);
+      this.heroiService.adicionar(this.token, heroi)
           .then(() => {
             this.cadastrarSucesso = `Herói '${heroi.nome}' adicionado com sucesso.`;
             this.nome = null;
             this.poderes = [];
           })
-          .catch(() => {
-            this.cadastrarErro = `Erro: Não foi possível adicionar o '${heroi.nome}'.`;
+          .catch((error) => {
+            this.cadastrarErro = `Erro: ${error.message}.`;
           })
           .finally(() => this.adicionandoHeroi = false);
     }

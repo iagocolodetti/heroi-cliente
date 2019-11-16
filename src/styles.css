@@ -5,3 +5,7 @@ html, body {
     padding-right: 30px;
     padding-left: 30px;
 }
+
+.btn-fix {
+    width: 160px;
+}

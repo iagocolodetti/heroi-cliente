@@ -8,12 +8,18 @@ import { ListarHeroiComponent } from './listar-heroi/listar-heroi.component';
 import { CadastrarHeroiComponent } from './cadastrar-heroi/cadastrar-heroi.component';
 import { HeroiService } from './service/heroi.service';
 import { UniversoService } from './service/universo.service';
+import { LogarUsuarioComponent } from './logar-usuario/logar-usuario.component';
+import { CadastrarUsuarioComponent } from './cadastrar-usuario/cadastrar-usuario.component';
+import { DeslogarUsuarioComponent } from './deslogar-usuario/deslogar-usuario.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     ListarHeroiComponent,
-    CadastrarHeroiComponent
+    CadastrarHeroiComponent,
+    LogarUsuarioComponent,
+    CadastrarUsuarioComponent,
+    DeslogarUsuarioComponent
   ],
   imports: [
     BrowserModule,
