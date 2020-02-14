@@ -24,7 +24,7 @@ export class ListarHeroiComponent implements OnInit {
   constructor(private heroiService: HeroiService, private router: Router) { }
 
   ngOnInit() {
-    this.token = localStorage.getItem('heroisApiToken');
+    this.token = localStorage.getItem('heroisApiAuth');
     if (this.token) {
       this.carregarHerois();
     } else {
@@ -42,9 +42,9 @@ export class ListarHeroiComponent implements OnInit {
           this.heroisErro = null;
         })
         .catch((error) => {
-          if (error.status === "401") {
-            localStorage.removeItem('heroisApiToken');
-            localStorage.setItem('heroisApiTokenError', error.message);
+          if (error.status === 401) {
+            localStorage.removeItem('heroisApiAuth');
+            localStorage.setItem('heroisApiAuthError', error.message);
             this.router.navigateByUrl('/login');
           } else {
             this.heroisErro = `Erro: ${error.message}.`;
@@ -63,9 +63,9 @@ export class ListarHeroiComponent implements OnInit {
             this.heroiExcluirSucesso = `Herói '${heroi.nome}' excluído com sucesso.`;
           })
           .catch((error) => {
-            if (error.status === "401") {
-              localStorage.removeItem('heroisApiToken');
-              localStorage.setItem('heroisApiTokenError', error.message);
+            if (error.status === 401) {
+              localStorage.removeItem('heroisApiAuth');
+              localStorage.setItem('heroisApiAuthError', error.message);
               this.router.navigateByUrl('/login');
             } else {
               this.heroiExcluirErro = `Erro: ${error.message}.`;

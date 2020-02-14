@@ -11,7 +11,7 @@ export class DeslogarUsuarioComponent implements OnInit {
   constructor(private router: Router) { }
 
   ngOnInit() {
-    localStorage.removeItem('heroisApiToken');
+    localStorage.clear();
     this.router.navigateByUrl('/login');
   }
 

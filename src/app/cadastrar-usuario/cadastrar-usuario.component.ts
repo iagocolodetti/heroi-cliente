@@ -39,20 +39,14 @@ export class CadastrarUsuarioComponent implements OnInit {
       this.cadastrarErro = 'Erro: Senhas diferentes.';
     } else {
       this.cadastrandoUsuario = true;
-      let usuario = new Usuario(this.nome, this.senha);
+      const usuario = new Usuario(this.nome, this.senha);
       this.usuarioService.cadastrar(usuario)
           .then(() => {
             this.cadastrarSucesso = `Usuário '${usuario.nome}' cadastrado com sucesso.`;
             this.nome = this.senha = this.rsenha = null;
           })
           .catch((error) => {
-            if (error.status === "401") {
-              localStorage.removeItem('heroisApiToken');
-              localStorage.setItem('heroisApiTokenError', error.message);
-              this.router.navigateByUrl('/login');
-            } else {
-              this.cadastrarErro = `Erro: ${error.message}.`;
-            }
+            this.cadastrarErro = `Erro: ${error.message}.`;
           })
           .finally(() => this.cadastrandoUsuario = false);
     }

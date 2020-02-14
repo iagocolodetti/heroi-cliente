@@ -13,7 +13,7 @@ import { Heroi } from '../model/heroi';
 })
 export class CadastrarHeroiComponent implements OnInit {
 
-  token = null;
+  authorization = null;
 
   nome = null;
   universo = null;
@@ -26,13 +26,13 @@ export class CadastrarHeroiComponent implements OnInit {
 
   cadastrarErro = null;
   cadastrarSucesso = null;
-  adicionandoHeroi = false;
+  cadastrandoHeroi = false;
 
   constructor(private universoService: UniversoService, private heroiService: HeroiService, private router: Router) { }
 
   ngOnInit() {
-    this.token = localStorage.getItem('heroisApiToken');
-    if (!this.token) {
+    this.authorization = localStorage.getItem('heroisApiAuth');
+    if (!this.authorization) {
       this.router.navigateByUrl('/login');
     }
     this.buscarUniversos();
@@ -62,28 +62,34 @@ export class CadastrarHeroiComponent implements OnInit {
     this.poderes.splice(this.poderes.indexOf(poder), 1);
   }
 
-  adicionarHeroi() {
+  cadastrarHeroi() {
     this.cadastrarErro = null;
     this.cadastrarSucesso = null;
     if (!this.nome) {
       this.cadastrarErro = 'Erro: Preencha o campo destinado ao nome.';
     } else if (!this.universo) {
       this.cadastrarErro = 'Erro: Selecione um universo.';
-    } else if (this.poderes.length == 0) {
+    } else if (this.poderes.length === 0) {
       this.cadastrarErro = 'Erro: Adicione ao menos um poder.';
     } else {
-      this.adicionandoHeroi = true;
-      let heroi = new Heroi(null, this.nome, null, new Universo(this.universo, null), this.poderes);
-      this.heroiService.adicionar(this.token, heroi)
+      this.cadastrandoHeroi = true;
+      const heroi = new Heroi(null, this.nome, null, new Universo(this.universo, null), this.poderes);
+      this.heroiService.adicionar(this.authorization, heroi)
           .then(() => {
-            this.cadastrarSucesso = `Herói '${heroi.nome}' adicionado com sucesso.`;
+            this.cadastrarSucesso = `Herói '${heroi.nome}' cadastrado com sucesso.`;
             this.nome = null;
             this.poderes = [];
           })
           .catch((error) => {
-            this.cadastrarErro = `Erro: ${error.message}.`;
+            if (error.status === 401) {
+              localStorage.removeItem('heroisApiAuth');
+              localStorage.setItem('heroisApiAuthError', error.message);
+              this.router.navigateByUrl('/login');
+            } else {
+              this.cadastrarErro = `Erro: ${error.message}.`;
+            }
           })
-          .finally(() => this.adicionandoHeroi = false);
+          .finally(() => this.cadastrandoHeroi = false);
     }
   }
 }

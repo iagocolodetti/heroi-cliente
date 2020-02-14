@@ -19,13 +19,13 @@ export class LogarUsuarioComponent implements OnInit {
   constructor(private usuarioService: UsuarioService, private router: Router) { }
 
   ngOnInit() {
-    if (localStorage.getItem('heroisApiToken')) {
+    if (localStorage.getItem('heroisApiAuth')) {
       this.router.navigateByUrl('/herois/listar');
     } else {
-      let erro = localStorage.getItem('heroisApiTokenError');
-      if (erro) {
-        this.logarErro = `Erro: ${erro}.`;
-        localStorage.removeItem('heroisApiTokenError');
+      const error = localStorage.getItem('heroisApiAuthError');
+      if (error) {
+        this.logarErro = `Erro: ${error}.`;
+        localStorage.removeItem('heroisApiAuthError');
       }
     }
   }
@@ -38,12 +38,12 @@ export class LogarUsuarioComponent implements OnInit {
       this.logarErro = 'Erro: Preencha o campo destinado à senha.';
     } else {
       this.logandoUsuario = true;
-      let usuario = new Usuario(this.nome, this.senha);
+      const usuario = new Usuario(this.nome, this.senha);
       this.usuarioService.login(usuario)
           .then((response) => {
-            let token = response.headers.get('authorization');
-            if (token) {
-              localStorage.setItem('heroisApiToken', token);
+            const authorization = response.headers.get('authorization');
+            if (authorization) {
+              localStorage.setItem('heroisApiAuth', authorization);
               this.router.navigateByUrl('/herois/listar');
             }
           })
