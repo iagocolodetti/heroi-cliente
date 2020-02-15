@@ -62,7 +62,7 @@ export class CadastrarHeroiComponent implements OnInit {
     this.poderes.splice(this.poderes.indexOf(poder), 1);
   }
 
-  cadastrarHeroi() {
+  async cadastrarHeroi() {
     this.cadastrarErro = null;
     this.cadastrarSucesso = null;
     if (!this.nome) {
@@ -74,22 +74,23 @@ export class CadastrarHeroiComponent implements OnInit {
     } else {
       this.cadastrandoHeroi = true;
       const heroi = new Heroi(null, this.nome, null, new Universo(this.universo, null), this.poderes);
-      this.heroiService.adicionar(this.authorization, heroi)
-          .then(() => {
-            this.cadastrarSucesso = `Herói '${heroi.nome}' cadastrado com sucesso.`;
-            this.nome = null;
-            this.poderes = [];
-          })
-          .catch((error) => {
-            if (error.status === 401) {
-              localStorage.removeItem('heroisApiAuth');
-              localStorage.setItem('heroisApiAuthError', error.message);
-              this.router.navigateByUrl('/login');
-            } else {
-              this.cadastrarErro = `Erro: ${error.message}.`;
-            }
-          })
-          .finally(() => this.cadastrandoHeroi = false);
+      try {
+        await this.heroiService.cadastrar(this.authorization, heroi);
+        this.cadastrarSucesso = `Herói '${heroi.nome}' cadastrado com sucesso.`;
+        this.nome = null;
+        this.universo = null;
+        this.poderes = [];
+      } catch (error) {
+        if (error.status === 401) {
+          localStorage.removeItem('heroisApiAuth');
+          localStorage.setItem('heroisApiAuthError', error.message);
+          this.router.navigateByUrl('/login');
+        } else {
+          this.cadastrarErro = `Erro: ${error.message}.`;
+        }
+      } finally {
+        this.cadastrandoHeroi = false;
+      }
     }
   }
 }

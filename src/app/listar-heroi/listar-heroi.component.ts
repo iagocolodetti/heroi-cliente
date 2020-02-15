@@ -10,7 +10,7 @@ import { HeroiService } from '../service/heroi.service';
 })
 export class ListarHeroiComponent implements OnInit {
 
-  token = null;
+  authorization = null;
 
   herois: Array<Heroi> = [];
 
@@ -24,53 +24,52 @@ export class ListarHeroiComponent implements OnInit {
   constructor(private heroiService: HeroiService, private router: Router) { }
 
   ngOnInit() {
-    this.token = localStorage.getItem('heroisApiAuth');
-    if (this.token) {
+    this.authorization = localStorage.getItem('heroisApiAuth');
+    if (this.authorization) {
       this.carregarHerois();
     } else {
       this.router.navigateByUrl('/login');
     }
   }
 
-  carregarHerois() {
+  async carregarHerois() {
     this.carregandoHerois = true;
     this.heroiExcluirSucesso = null;
     this.heroiExcluirErro = null;
-    this.heroiService.carregar(this.token)
-        .then((herois: Array<Heroi>) => {
-          this.herois = herois;
-          this.heroisErro = null;
-        })
-        .catch((error) => {
-          if (error.status === 401) {
-            localStorage.removeItem('heroisApiAuth');
-            localStorage.setItem('heroisApiAuthError', error.message);
-            this.router.navigateByUrl('/login');
-          } else {
-            this.heroisErro = `Erro: ${error.message}.`;
-          }
-        })
-        .finally(() => this.carregandoHerois = false);
+    try {
+      const response = await this.heroiService.carregar(this.authorization);
+      this.herois = <Heroi[]> response;
+      this.heroisErro = null;
+    } catch (error) {
+      if (error.status === 401) {
+        localStorage.removeItem('heroisApiAuth');
+        localStorage.setItem('heroisApiAuthError', error.message);
+        this.router.navigateByUrl('/login');
+      } else {
+        this.heroisErro = `Erro: ${error.message}.`;
+      }
+    } finally {
+      this.carregandoHerois = false;
+    }
   }
 
-  excluirHeroi(heroi: Heroi) {
+  async excluirHeroi(heroi: Heroi) {
     if (confirm(`Deseja realmente excluir o herói '${heroi.nome}'?`)) {
       this.heroiExcluirSucesso = null;
       this.heroiExcluirErro = null;
-      this.heroiService.excluir(this.token, heroi)
-          .then(() => {
-            this.herois.splice(this.herois.indexOf(heroi), 1);
-            this.heroiExcluirSucesso = `Herói '${heroi.nome}' excluído com sucesso.`;
-          })
-          .catch((error) => {
-            if (error.status === 401) {
-              localStorage.removeItem('heroisApiAuth');
-              localStorage.setItem('heroisApiAuthError', error.message);
-              this.router.navigateByUrl('/login');
-            } else {
-              this.heroiExcluirErro = `Erro: ${error.message}.`;
-            }
-          });
+      try {
+        await this.heroiService.excluir(this.authorization, heroi);
+        this.herois.splice(this.herois.indexOf(heroi), 1);
+        this.heroiExcluirSucesso = `Herói '${heroi.nome}' excluído com sucesso.`;
+      } catch (error) {
+        if (error.status === 401) {
+          localStorage.removeItem('heroisApiAuth');
+          localStorage.setItem('heroisApiAuthError', error.message);
+          this.router.navigateByUrl('/login');
+        } else {
+          this.heroiExcluirErro = `Erro: ${error.message}.`;
+        }
+      }
     }
   }
 }

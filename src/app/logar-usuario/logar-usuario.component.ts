@@ -30,7 +30,7 @@ export class LogarUsuarioComponent implements OnInit {
     }
   }
 
-  logar() {
+  async logar() {
     this.logarErro = null;
     if (!this.nome) {
       this.logarErro = 'Erro: Preencha o campo destinado ao nome.';
@@ -39,18 +39,18 @@ export class LogarUsuarioComponent implements OnInit {
     } else {
       this.logandoUsuario = true;
       const usuario = new Usuario(this.nome, this.senha);
-      this.usuarioService.login(usuario)
-          .then((response) => {
-            const authorization = response.headers.get('authorization');
-            if (authorization) {
-              localStorage.setItem('heroisApiAuth', authorization);
-              this.router.navigateByUrl('/herois/listar');
-            }
-          })
-          .catch((error) => {
-            this.logarErro = `Erro: ${error.message}.`;
-          })
-          .finally(() => this.logandoUsuario = false);
+      try {
+        const response = await this.usuarioService.login(usuario);
+        const authorization = response.headers.get('authorization');
+        if (authorization) {
+          localStorage.setItem('heroisApiAuth', authorization);
+          this.router.navigateByUrl('/herois/listar');
+        }
+      } catch (error) {
+        this.logarErro = `Erro: ${error.message}.`;
+      } finally {
+        this.logandoUsuario = false;
+      }
     }
   }
 
